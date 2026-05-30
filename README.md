@@ -1,5 +1,7 @@
 The iOS Billing SDK is a simple solution to implement Aptoide billing. Its Unity Plugin provides a simple interface for Unity games to communicate with the SDK. It consists of a Billing client that allows you to get your products from Aptoide Connect and process the purchase of those items.
 
+The SDK automatically handles transaction reporting to Apple for Core Technology Commission (CTC) calculation, removing this burden from developers. It includes intelligent logic for reporting purchases, refunds, and other transaction events, with region-aware processing that distinguishes which regions require CTC reporting and which do not.
+
 ## In Summary
 
 The billing flow in your application with the Plugin is as follows:
@@ -22,15 +24,27 @@ The billing flow in your application with the Plugin is as follows:
 1. **Add AppCoins Unity Plugin**  
    In Unity, add the plugin from the latest release available on the repository <https://github.com/Catappult/appcoins-sdk-ios-unity-plugin> to your Assets folder.
 
+### Namespace
+
+All public classes in the plugin are defined under the `AppCoins` namespace. Add the following `using` directive at the top of any C# file that references plugin types:
+
+```csharp
+using AppCoins;
+```
+
+Alternatively, you can use fully qualified names (e.g., `AppCoins.Product`, `AppCoins.Purchase`).
+
 ### Implementation
 
 Now that you have the Plugin set-up you can start making use of its functionalities.
 
-1. **Check AppCoins Billing Availability**  
-   
+1. **Check AppCoins Billing Availability**
+
    The AppCoins Billing will only be available on devices with an iOS version equal to or higher than 17.4 and only if the application was not installed through the Apple App St. Therefore, before attempting any purchase, you should check if the SDK is available by calling `AppCoinsSDK.Instance.IsAvailable()`.
 
    ```csharp
+   using AppCoins;
+
    var isAvailable = await AppCoinsSDK.Instance.IsAvailable();
 
    if (isAvailable) 
@@ -47,6 +61,8 @@ Now that you have the Plugin set-up you can start making use of its functionalit
       Returns all application Catappult In-App Products:
 
       ```csharp
+      using AppCoins;
+
       var productsResult = await AppCoinsSDK.Instance.GetProducts();
 
       if (productsResult.IsSuccess)
@@ -65,6 +81,8 @@ Now that you have the Plugin set-up you can start making use of its functionalit
       Returns a specific list of Catappult In-App Products:
 
       ```csharp
+      using AppCoins;
+
       var productsResult = await AppCoinsSDK.Instance.GetProducts(new string[] { "coins_100", "gas" });
 
       if (productsResult.IsSuccess)
@@ -102,6 +120,8 @@ Now that you have the Plugin set-up you can start making use of its functionalit
    <br/>
 
    ```csharp
+   using AppCoins;
+
    var purchaseResult = await AppCoinsSDK.Instance.Purchase("gas", "User123");
 
    switch (purchaseResult.State)
@@ -167,6 +187,8 @@ Now that you have the Plugin set-up you can start making use of its functionalit
    Add this code to your application's startup logic (e.g., in your main scene's `Start()` or `Awake()` method):
 
    ```csharp
+   using AppCoins;
+
    private async void Start()
    {
        // Check if AppCoins Billing is available
@@ -239,6 +261,8 @@ Now that you have the Plugin set-up you can start making use of its functionalit
    <br/>
 
    ```csharp
+   using AppCoins;
+
    private void Awake()
    {
        // Singleton enforcement
@@ -310,6 +334,8 @@ Now that you have the Plugin set-up you can start making use of its functionalit
       This method returns all purchases that the user has performed in your application.
 
       ```csharp
+      using AppCoins;
+
       var purchasesResult = await AppCoinsSDK.Instance.GetAllPurchases();
 
       if (purchasesResult.IsSuccess)
@@ -328,6 +354,8 @@ Now that you have the Plugin set-up you can start making use of its functionalit
       This method returns the latest user purchase for a specific In-App Product. Returns `null` if no purchase is found.
 
       ```csharp
+      using AppCoins;
+
       var latestPurchaseResult = await AppCoinsSDK.Instance.GetLatestPurchase("gas");
 
       if (latestPurchaseResult.IsSuccess)
@@ -353,6 +381,8 @@ Now that you have the Plugin set-up you can start making use of its functionalit
       This method returns all of the user's unfinished purchases in the application. An unfinished purchase is any purchase that has neither been acknowledged (verified by the SDK) nor consumed. You can use this method for consuming any unfinished purchases.
 
       ```csharp
+      using AppCoins;
+
       var unfinishedPurchasesResult = await AppCoinsSDK.Instance.GetUnfinishedPurchases();
 
       if (unfinishedPurchasesResult.IsSuccess)

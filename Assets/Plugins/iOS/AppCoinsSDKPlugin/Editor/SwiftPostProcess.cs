@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Callbacks;
 using UnityEditor.iOS.Xcode;
@@ -18,10 +19,10 @@ public static class SwiftPostProcess
 
             var targetGuid = proj.TargetGuidByName(PBXProject.GetUnityTestTargetName());
 
-            var appCoinsGuid = proj.AddRemotePackageReferenceAtVersionUpToNextMajor("https://github.com/Catappult/appcoins-sdk-ios.git", "4.0.0");
+            var appCoinsGuid = proj.AddRemotePackageReferenceAtVersionUpToNextMajor("https://github.com/Catappult/appcoins-sdk-ios.git", "4.3.2");
+
             var mainTargetGuid = proj.GetUnityMainTargetGuid();
             var frameworkGuid = proj.GetUnityFrameworkTargetGuid();
-            proj.AddRemotePackageFrameworkToProject(mainTargetGuid, "AppCoinsSDK", appCoinsGuid, false);
             proj.AddRemotePackageFrameworkToProject(frameworkGuid, "AppCoinsSDK", appCoinsGuid, false);
 
             proj.SetBuildProperty(targetGuid, "ENABLE_BITCODE", "NO");
@@ -51,6 +52,7 @@ public static class SwiftPostProcess
             AddSDKUrlType(buildPath);
             AddWalletQueriedUrlScheme(buildPath);
             AddCFBundleAllowMixedLocalizations(buildPath);
+            AddMKSellsDigitalGoods(buildPath);
         }
     }
 
@@ -89,4 +91,14 @@ public static class SwiftPostProcess
         plistInfo.root.SetBoolean("CFBundleAllowMixedLocalizations", true);
         plistInfo.WriteToFile(plistInfoPath);
     }
+
+    static void AddMKSellsDigitalGoods(string buildPath)
+    {
+        string plistInfoPath = Path.Combine(buildPath, "Info.plist");
+        PlistDocument plistInfo = new();
+        plistInfo.ReadFromFile(plistInfoPath);
+        plistInfo.root.SetBoolean("MKSellsDigitalGoods", true);
+        plistInfo.WriteToFile(plistInfoPath);
+    }
 }
+#endif

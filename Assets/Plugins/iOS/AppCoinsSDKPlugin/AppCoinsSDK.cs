@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 
+namespace AppCoins
+{
+
 [Serializable]
 public class AppCoinsSDKError {
     public string Type;
@@ -185,7 +188,7 @@ public class AppCoinsSDK
 
     public const string PURCHASE_STATE_SUCCESS = "success";
     public const string PURCHASE_STATE_PENDING = "pending";
-    public const string PURCHASE_STATE_USER_CANCELLED = "userCancelled";
+    public const string PURCHASE_STATE_USER_CANCELLED = "user_cancelled";
     public const string PURCHASE_STATE_FAILED = "failed";
 
     public const string PURCHASE_VERIFICATION_STATE_VERIFIED = "verified";
@@ -634,9 +637,11 @@ public class AppCoinsSDK
     {
         if (_isObservingPurchases)
             return; // Prevent multiple registrations
-        
+
         _isObservingPurchases = true;
         _startPurchaseUpdates();
     }
     #endregion
 }
+
+} // namespace AppCoins
